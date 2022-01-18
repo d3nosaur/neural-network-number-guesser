@@ -1,24 +1,13 @@
 package d3nosaur.neural_network.mnist;
 
-public class MNISTMatrix {
-	private int[][] matrix;
+import d3nosaur.neural_network.DoubleMatrix;
+
+@SuppressWarnings("serial")
+public class MNISTMatrix extends DoubleMatrix {
 	private int label;
-	private int rows;
-	private int columns;
 	
 	public MNISTMatrix(int rows, int columns) {
-		matrix = new int[rows][columns];
-		
-		this.rows = rows;
-		this.columns = columns;
-	}
-	
-	public int getValue(int row, int column) {
-		return matrix[row][column];
-	}
-	
-	public void setValue(int row, int column, int value) {
-		matrix[row][column] = value;
+		super(rows, columns);
 	}
 
 	public int getLabel() {
@@ -28,12 +17,15 @@ public class MNISTMatrix {
 	public void setLabel(int label) {
 		this.label = label;
 	}
-
-	public int getColumns() {
-		return columns;
-	}
-
-	public int getRows() {
-		return rows;
+	
+	@Override
+	public void printMatrix() {
+		System.out.println("Label: " + label);
+		for(int y=0; y<height; y++) {
+			for(int x=0; x<width; x++) {
+				System.out.print(df.format(matrix[x][y]) + " ");
+			}
+			System.out.println();
+		}
 	}
 }

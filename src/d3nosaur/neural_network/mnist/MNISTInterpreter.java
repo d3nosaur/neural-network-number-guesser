@@ -6,36 +6,31 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class MNISTInterpreter {
+	@SuppressWarnings("unused")
 	public static MNISTMatrix[] readData(String dataPath, String labelPath) throws IOException {
 		DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(dataPath)));
 		int dataMagicNumber = dataInputStream.readInt();
 		int dataItemCount = dataInputStream.readInt();
 		int rows = dataInputStream.readInt();
 		int columns = dataInputStream.readInt();
-		
-		System.out.println("Data Magic Number: " + dataMagicNumber);
-		System.out.println("Data Item Count: " + dataItemCount);
-		System.out.println("Row Count: " + rows);
-		System.out.println("Column Count: " + columns);
-		
+
 		DataInputStream labelInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(labelPath)));
 		int labelMagicNumber = labelInputStream.readInt();
 		int labelItemCount = labelInputStream.readInt();
 		
-		System.out.println("Label Magic Number: " + labelMagicNumber);
-		System.out.println("Label Item Count: " + labelItemCount);
 		
 		MNISTMatrix[] data = new MNISTMatrix[dataItemCount];
 		
 		assert dataItemCount == labelItemCount : "Item Counts are not Equal";
 		
+		// Turns the data collected into MNISTMatrix's and adds to data array
 		for(int i=0; i<dataItemCount; i++) {
 			MNISTMatrix matrix = new MNISTMatrix(rows, columns);
 			matrix.setLabel(labelInputStream.readUnsignedByte());
 			
-			for(int r=0; r<rows; r++) {
-				for(int c=0; c<columns; c++) {
-					matrix.setValue(r, c, dataInputStream.readUnsignedByte());
+			for(int x=0; x<matrix.getWidth(); x++) {
+				for(int y=0; y<matrix.getHeight(); y++) {
+					matrix.setValue(y, x, dataInputStream.readUnsignedByte() / 255f);
 				}
 			}
 			
@@ -46,16 +41,5 @@ public class MNISTInterpreter {
 		labelInputStream.close();
 		
 		return data;
-	}
-	
-	public static void printData(MNISTMatrix matrix) {
-		System.out.println("Label: " + matrix.getLabel());
-		
-		for(int r=0; r<matrix.getRows(); r++) {
-			for(int c=0; c<matrix.getColumns(); c++) {
-				System.out.print(matrix.getValue(r, c) + " ");
-			}
-			System.out.println();
-		}
 	}
 }

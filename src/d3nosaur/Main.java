@@ -6,14 +6,18 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import d3nosaur.neural_network.PredictionPanel;
-import d3nosaur.neural_network.mnist.MNISTInterpreter;
-import d3nosaur.neural_network.mnist.MNISTMatrix;
+import d3nosaur.neural_network.DoubleMatrix;
+import d3nosaur.neural_network.NeuralData;
+import d3nosaur.neural_network.NeuralNetwork;
 import d3nosaur.paint.MousePaint;
 import d3nosaur.paint.PaintPanel;
+import d3nosaur.paint.PredictionPanel;
 
 public class Main {
-	private static void initUIComponents() {
+	public static NeuralNetwork network = new NeuralNetwork();
+	private static boolean training = false;
+
+	private static void initPaintComponents() {
 		PaintPanel paintPanel = new PaintPanel();
 		MousePaint mousePaint = new MousePaint(paintPanel);
 		paintPanel.addMouseListener(mousePaint);
@@ -34,10 +38,24 @@ public class Main {
 		frame.setVisible(true);
 	}
 	
+	public static NeuralNetwork getNeuralNetwork() {
+		return network;
+	}
+	
 	public static void main(String[] args) throws IOException {
-		initUIComponents();
+		DoubleMatrix hidden = NeuralData.getBestLayer("hidden");
+		if(hidden != null)
+			network.setHiddenLayer(hidden);
 		
-		//MNISTMatrix[] matrix = MNISTInterpreter.readData("data/train-images.idx3-ubyte", "data/train-labels.idx1-ubyte");
-		//MNISTInterpreter.printData(matrix[matrix.length - 1]);
+		DoubleMatrix output = NeuralData.getBestLayer("output");
+		if(output != null)
+			network.setOutputLayer(output);
+	
+		network.setBestAccuracy(NeuralData.getBestAccuracy());
+		
+		if(training)
+			network.train("data/train-images.idx3-ubyte", "data/train-labels.idx1-ubyte");
+		else
+			initPaintComponents();
 	}
 }
