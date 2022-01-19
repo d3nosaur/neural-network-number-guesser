@@ -46,8 +46,12 @@ public class NeuralNetwork {
 		System.out.println("Starting training on " + batchSize + " examples");
 		
 		while(sameAccuracy < 10) {
-			for(MNISTMatrix matrix : data)
-				backPropogate(matrix);
+			data = NeuralMath.shuffle(data);
+			boolean first = true;
+			for(MNISTMatrix matrix : data) {
+				backPropogate(matrix, first);
+				first = false;
+			}
 			
 			iteration++;
 			
@@ -87,9 +91,12 @@ public class NeuralNetwork {
 		return outputs;
 	}
 	
-	public void backPropogate(MNISTMatrix matrix) {
+	public void backPropogate(MNISTMatrix matrix, boolean print) {
 		double[] values = matrix.flatten();
 		int target = matrix.getLabel();
+		
+		if(print)
+			matrix.printMatrix();
 		
 		float coefficient = 1f/(iteration + 10);
 		
@@ -97,7 +104,7 @@ public class NeuralNetwork {
 		double[] hiddenOutputs = feedOutput.get(0);
 		double[] outputs = feedOutput.get(1);
 		
-		double[] outputDeltas = NeuralMath.multiply(NeuralMath.multiply(outputs, NeuralMath.subtract(1, outputs)), NeuralMath.subtract(outputs, target, 1));
+		double[] outputDeltas = NeuralMath.multiply(NeuralMath.multiply(outputs, NeuralMath.subtract(1, outputs)), NeuralMath.subtract(outputs, target, 2));
 		double[] hiddenDeltas = NeuralMath.multiply(NeuralMath.dot(NeuralMath.rotate(NeuralMath.popColumn(layers[1])), outputDeltas), NeuralMath.multiply(hiddenOutputs, NeuralMath.subtract(1, hiddenOutputs)));
 		
 		layers[1] = NeuralMath.subtract(layers[1], NeuralMath.multiply(coefficient, NeuralMath.outer(outputDeltas, NeuralMath.arrayAppend(hiddenOutputs, 1))));
@@ -116,6 +123,8 @@ public class NeuralNetwork {
 		float right = 0;
 		float wrong = 0;
 		
+		data = NeuralMath.shuffle(data);
+		
 		for(MNISTMatrix matrix : data) {
 			int prediction = predict(matrix);
 			if(prediction == matrix.getLabel())
@@ -125,11 +134,5 @@ public class NeuralNetwork {
 		}
 		
 		return (right/(right + wrong))*100;
-	}
-	
-	public void printArray(double[] array) {
-		for(double i : array)
-			System.out.print(i + " ");
-		System.out.println();
 	}
 }

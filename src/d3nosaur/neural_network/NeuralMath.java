@@ -2,6 +2,8 @@ package d3nosaur.neural_network;
 
 import java.util.Random;
 
+import d3nosaur.neural_network.mnist.MNISTMatrix;
+
 public class NeuralMath {
 	private static Random rand = new Random();
 	
@@ -16,20 +18,6 @@ public class NeuralMath {
 			output[i] = sig(array[i]);
 		}
 		
-		return output;
-	}
-	
-	public static double ReLU(double x) {
-		return Math.max(0, x);
-	}
-	
-	public static double[] ReLU(double[] array) {
-		double[] output = new double[array.length];
-				
-		for(int i=0; i<array.length; i++) {
-			output[i] = ReLU(array[i]);
-		}
-				
 		return output;
 	}
 	
@@ -313,5 +301,19 @@ public class NeuralMath {
 		}
 		
 		return output;
+	}
+	
+	// Fisher-Yates shuffle
+	public static MNISTMatrix[] shuffle(MNISTMatrix[] matrix) {
+		MNISTMatrix[] copy = matrix.clone();
+		for(int i = matrix.length - 1; i>0; i--) {
+			int index = rand.nextInt(i+1);
+			
+			MNISTMatrix hold = copy[index];
+			copy[index] = copy[i];
+			copy[i] = hold;
+		}
+		
+		return copy;
 	}
 }
