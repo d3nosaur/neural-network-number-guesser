@@ -15,7 +15,7 @@ import d3nosaur.paint.PredictionPanel;
 
 public class Main {
 	public static NeuralNetwork network = new NeuralNetwork();
-	private static boolean training = true;
+	private static boolean training = false;
 
 	private static void initPaintComponents() {
 		PaintPanel paintPanel = new PaintPanel();

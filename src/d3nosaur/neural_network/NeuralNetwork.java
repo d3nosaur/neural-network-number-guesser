@@ -47,11 +47,9 @@ public class NeuralNetwork {
 		
 		while(sameAccuracy < 10) {
 			data = NeuralMath.shuffle(data);
-			boolean first = true;
-			for(MNISTMatrix matrix : data) {
-				backPropogate(matrix, first);
-				first = false;
-			}
+			
+			for(MNISTMatrix matrix : data)
+				backPropogate(matrix);
 			
 			iteration++;
 			
@@ -91,12 +89,9 @@ public class NeuralNetwork {
 		return outputs;
 	}
 	
-	public void backPropogate(MNISTMatrix matrix, boolean print) {
+	public void backPropogate(MNISTMatrix matrix) {
 		double[] values = matrix.flatten();
 		int target = matrix.getLabel();
-		
-		if(print)
-			matrix.printMatrix();
 		
 		float coefficient = 1f/(iteration + 10);
 		
